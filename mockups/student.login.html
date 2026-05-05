@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resolve AI - Student Login</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+/* BACKGROUND */
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+/* CARD */
+.container{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    width:350px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.2);
+    animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+/* TITLE */
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#333;
+}
+
+/* INPUT */
+.input-group{
+    margin-bottom:15px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:5px;
+    font-size:14px;
+    color:#555;
+}
+
+.input-group input{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    outline:none;
+    transition:0.3s;
+}
+
+.input-group input:focus{
+    border-color:#4facfe;
+    box-shadow:0 0 5px rgba(79,172,254,0.5);
+}
+
+/* PASSWORD ROW */
+.password-row{
+    position:relative;
+}
+
+.show-pass{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:12px;
+    cursor:pointer;
+    color:#4facfe;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#4facfe;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#007bff;
+    transform:scale(1.03);
+}
+
+/* EXTRA LINKS */
+.options{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:13px;
+}
+
+.options a{
+    color:#4facfe;
+    text-decoration:none;
+}
+
+.options a:hover{
+    text-decoration:underline;
+}
+
+/* FOOTER */
+.footer{
+    margin-top:15px;
+    text-align:center;
+    font-size:14px;
+}
+
+.footer a{
+    color:#4facfe;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.footer a:hover{
+    text-decoration:underline;
+}
+a{
+    text-decoration: none;
+    color: white;
+    font-weight: bolder;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Student Login</h2>
+
+    <form onsubmit="login(event)">
+        <div class="input-group Rollno.-row">
+            <label>Institute Roll No.</label>
+            <input type="text" id="password" required>
+        </div>
+
+        <button type="submit"><a href="homepage_student.html">Login</a></button>
+
+    </form>
+
+    <div class="options">
+        <a href="#">Forgot Roll No ?</a>
+    </div>
+
+    <div class="footer">
+        Don’t have an account? <a href="student.signup.html">Sign up</a>
+    </div>
+
+</div>
+
+<script>
+
+/* LOGIN */
+function login(e){
+    e.preventDefault();
+    alert("Login Successful 🚀");
+}
+
+/* SHOW/HIDE PASSWORD */
+function togglePassword(){
+    let pass = document.getElementById("password");
+
+    if(pass.type === "password"){
+        pass.type = "text";
+    }else{
+        pass.type = "password";
+    }
+}
+
+</script>
+
+</body>
+</html>

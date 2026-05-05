@@ -1,0 +1,432 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resolve AI Dashboard</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+
+body{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:#f5f7fb;
+    transition:0.3s;
+}
+body.dark{
+    background:#1e1e2f;
+    color:#f1f1f1;
+}
+
+.screen{flex:1;display:none;flex-direction:column}
+.screen.active{display:flex}
+
+.header{
+    background:#4facfe;
+    color:white;
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.dark-toggle{
+    background:rgba(255,255,255,0.2);
+    border:none;
+    color:white;
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* STUDENTS */
+.student{
+    padding:15px;
+    border-bottom:1px solid #ddd;
+    cursor:pointer;
+    transition:0.25s;
+    position:relative;
+}
+.student:hover{
+    background:#eaf4ff;
+    transform:translateX(6px);
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.student::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    height:100%;
+    width:4px;
+    background:#4facfe;
+    transform:scaleY(0);
+    transition:0.25s;
+}
+.student:hover::before{
+    transform:scaleY(1);
+}
+.student.priority{
+    color:red;
+    font-weight:bold;
+}
+
+body.dark .student{
+    border-bottom:1px solid #444;
+}
+body.dark .student:hover{
+    background:#3a3a5a;
+}
+
+/* CHAT */
+.chat-box{flex:1;padding:10px;overflow:auto}
+
+.message{
+    margin:8px 0;
+    padding:10px;
+    border-radius:10px;
+    max-width:70%;
+}
+.student-msg{background:#eef5ff}
+.counsellor-msg{
+    background:#4facfe;
+    color:white;
+    margin-left:auto;
+}
+body.dark .student-msg{
+    background:#3a3a5a;
+    color:white;
+}
+
+/* AI SUGGESTIONS */
+.suggestions{
+    padding:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+.suggestions span{
+    background:#eef5ff;
+    padding:6px 10px;
+    border-radius:20px;
+    cursor:pointer;
+    font-size:13px;
+}
+.suggestions span:hover{
+    background:#4facfe;
+    color:white;
+}
+
+body.dark .suggestions span{
+    background:#3a3a5a;
+    color:white;
+}
+
+/* INPUT */
+.chat-input{display:flex;border-top:1px solid #ddd}
+.chat-input input{flex:1;padding:10px;border:none}
+.chat-input button{
+    padding:10px;
+    border:none;
+    background:#4facfe;
+    color:white;
+}
+
+/* DASHBOARD */
+.dashboard{padding:15px}
+.cards{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+.card{
+    flex:1;
+    min-width:120px;
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+}
+.card h2{color:#4facfe}
+
+body.dark .card{
+    background:#2c2c3c;
+}
+
+/* GRAPH */
+canvas{
+    width:100%;
+    max-height:250px;
+    background:white;
+    border-radius:10px;
+    padding:10px;
+}
+body.dark canvas{
+    background:#2c2c3c;
+}
+
+/* NAV */
+.bottom-nav{
+    display:flex;
+    justify-content:space-around;
+    background:white;
+    border-top:1px solid #ddd;
+    padding:8px;
+}
+.nav-item{
+    text-align:center;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+}
+.nav-item:hover{
+    background:#4facfe;
+    color:white;
+    padding:10px 16px;
+}
+.nav-item.active{
+    background:#4facfe;
+    color:white;
+}
+body.dark .bottom-nav{
+    background:#2c2c3c;
+}
+body.dark .nav-item:hover{
+    background:#339cff;
+}
+</style>
+</head>
+
+<body>
+
+<!-- CHAT LIST -->
+<div class="screen active" id="chatListScreen">
+    <div class="header">
+        Resolve AI
+        <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+    </div>
+    <div id="studentList"></div>
+</div>
+
+<!-- CHAT -->
+<div class="screen" id="chatScreen">
+    <div class="header">
+        <span onclick="goBack()">⬅</span>
+        <span id="chatHeader"></span>
+        <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+    </div>
+
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="suggestions" id="suggestionsBox"></div>
+
+    <div class="chat-input">
+        <input id="msgInput" placeholder="Type message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="dashboardScreen">
+    <div class="header">
+        Dashboard
+        <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+    </div>
+
+    <div class="dashboard">
+        <div class="cards">
+            <div class="card"><h2>12</h2><p>Queries Today</p></div>
+            <div class="card"><h2>8</h2><p>Solved</p></div>
+            <div class="card"><h2>3</h2><p>Serious</p></div>
+        </div>
+
+        <h3 style="margin-top:20px;">Monthly Solve Rate</h3>
+        <canvas id="chartCanvas"></canvas>
+        <br>
+        <h5>🟢 Green = good performance <br>
+            🔴 Red = low performance<br>
+            🟡 Yellow = transition zones</h5>
+    </div>
+</div>
+
+<!-- PROFILE -->
+<div class="screen" id="profileScreen">
+    <div class="header">
+        Profile
+        <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+    </div>
+    <div style="padding:20px;text-align:center">
+        <h3>Counsellor</h3>
+        <p>resolveai@email.com</p>
+    </div>
+</div>
+
+<!-- NAV -->
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('chatListScreen',this)">💬 Chats</div>
+    <div class="nav-item" onclick="switchTab('dashboardScreen',this)">📊 Dashboard</div>
+    <div class="nav-item" onclick="switchTab('profileScreen',this)">👤 Profile</div>
+</div>
+
+<script>
+
+/* DATA */
+let students=[
+    {name:"Rahul",messages:[{text:"whats the timing for physics class today ?",type:"student"}]},
+    {name:"Anjali",priority:true,messages:[
+        {text:"I feel stressed about exams 😔",type:"student"}
+    ]}
+];
+
+let current=null;
+
+/* RENDER */
+function renderStudents(){
+    let list=document.getElementById("studentList");
+    list.innerHTML="";
+    students.forEach((s,i)=>{
+        let d=document.createElement("div");
+        d.className="student "+(s.priority?"priority":"");
+        d.innerText=s.name;
+        d.onclick=()=>openChat(i);
+        list.appendChild(d);
+    });
+}
+renderStudents();
+
+/* CHAT */
+function openChat(i){
+    current=students[i];
+    document.getElementById("chatHeader").innerText=current.name;
+
+    let box=document.getElementById("chatBox");
+    box.innerHTML="";
+
+    current.messages.forEach(m=>{
+        addMsg(m.text,m.type);
+    });
+
+    updateSuggestions();
+    showScreen("chatScreen");
+}
+
+function goBack(){
+    showScreen("chatListScreen");
+}
+
+function addMsg(text,type){
+    let msg=document.createElement("div");
+    msg.className="message "+type+"-msg";
+    msg.innerText=text;
+    document.getElementById("chatBox").appendChild(msg);
+}
+
+function sendMessage(){
+    let input=document.getElementById("msgInput");
+    if(!current || input.value==="") return;
+
+    addMsg(input.value,"counsellor");
+    current.messages.push({text:input.value,type:"counsellor"});
+
+    input.value="";
+}
+
+/* 🤖 AI SUGGESTIONS */
+function updateSuggestions(){
+    let box=document.getElementById("suggestionsBox");
+    box.innerHTML="";
+
+    if(!current || current.messages.length===0) return;
+
+    let lastMsg=current.messages[current.messages.length-1].text.toLowerCase();
+
+    let replies = lastMsg.includes("stress") || lastMsg.includes("anxiety")
+        ? ["I'm here for you","Tell me more","We’ll solve this together"]
+        : ["Can you explain more?","I'm listening","How can I help?"];
+
+    replies.forEach(r=>{
+        let span=document.createElement("span");
+        span.innerText=r;
+        span.onclick=()=>{
+            document.getElementById("msgInput").value=r;
+            sendMessage();
+        };
+        box.appendChild(span);
+    });
+}
+
+/* NAV */
+function switchTab(id,el){
+    showScreen(id);
+    document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+    el.classList.add("active");
+}
+
+function showScreen(id){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+/* DARK */
+function toggleDark(){
+    document.body.classList.toggle("dark");
+}
+
+/* ENTER */
+document.getElementById("msgInput").addEventListener("keydown",e=>{
+    if(e.key==="Enter") sendMessage();
+});
+
+/* 📈 COLORED GRAPH */
+const canvas=document.getElementById("chartCanvas");
+const ctx=canvas.getContext("2d");
+
+canvas.width=400;
+canvas.height=250;
+
+let data=[30,50,40,70,60,80,90];
+let threshold=60;
+
+// axes
+ctx.strokeStyle="#888";
+ctx.beginPath();
+ctx.moveTo(40,10);
+ctx.lineTo(40,220);
+ctx.lineTo(380,220);
+ctx.stroke();
+
+// colored lines
+for(let i=0;i<data.length-1;i++){
+    let x1=40+i*45;
+    let y1=220-data[i]*2;
+    let x2=40+(i+1)*45;
+    let y2=220-data[i+1]*2;
+
+    if(data[i]>=threshold && data[i+1]>=threshold){
+        ctx.strokeStyle="#28a745";
+    } else if(data[i]<threshold && data[i+1]<threshold){
+        ctx.strokeStyle="#dc3545";
+    } else{
+        ctx.strokeStyle="#ffc107";
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+}
+
+// points
+data.forEach((v,i)=>{
+    let x=40+i*45;
+    let y=220-v*2;
+
+    ctx.fillStyle = v>=threshold ? "#28a745" : "#dc3545";
+
+    ctx.beginPath();
+    ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fill();
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resolve AI - Student Signup</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+/* BACKGROUND */
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+/* CARD */
+.container{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    width:350px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.2);
+    animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+/* TITLE */
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#333;
+}
+
+/* INPUT GROUP */
+.input-group{
+    margin-bottom:15px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:5px;
+    font-size:14px;
+    color:#555;
+}
+
+.input-group input{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    outline:none;
+    transition:0.3s;
+}
+
+.input-group input:focus{
+    border-color:#4facfe;
+    box-shadow:0 0 5px rgba(79,172,254,0.5);
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#4facfe;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#007bff;
+    transform:scale(1.03);
+}
+.footer{
+    margin-top:10px;
+    text-align:center;
+    font-size:14px;
+}
+
+.footer a{
+    color:#4facfe;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.footer a:hover{
+    text-decoration:underline;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Email Verification</h2>
+
+    <form onsubmit="verifyOTP(event)">
+
+        <div class="input-group">
+            <label>Email</label>
+            <input type="email" id="email" required>
+        </div>
+
+        <!-- SEND OTP BUTTON -->
+        <button type="button" onclick="sendOTP()">Send OTP</button>
+
+        <!-- LOGIN LINK -->
+        <div class="footer">
+            Already have an account? <a href="student.login.html">Login</a>
+        </div>
+        <!-- OTP SECTION (HIDDEN FIRST) -->
+        <div class="input-group" id="otpSection" style="display:none;">
+            <label>Enter OTP</label>
+            <input type="text" id="otp" placeholder="Enter OTP">
+        </div>
+
+        <!-- VERIFY BUTTON -->
+        <button type="submit" id="verifyBtn" style="display:none;">Verify OTP</button>
+
+    </form>
+
+</div>
+
+<script>
+
+let generatedOTP = "";
+
+function sendOTP(){
+    const email = document.getElementById("email").value;
+
+    if(!email){
+        alert("Enter email first!");
+        return;
+    }
+
+    generatedOTP = Math.floor(100000 + Math.random() * 900000);
+
+    alert("OTP sent (demo): " + generatedOTP);
+
+    document.getElementById("otpSection").style.display = "block";
+    document.getElementById("verifyBtn").style.display = "block";
+}
+
+function verifyOTP(e){
+    e.preventDefault();
+
+    const userOTP = document.getElementById("otp").value;
+
+    if(!userOTP){
+        alert("Enter OTP first!");
+        return;
+    }
+
+    if(userOTP == generatedOTP){
+        alert("OTP Verified ✅");
+
+        localStorage.setItem("userEmail", document.getElementById("email").value);
+
+        window.location.href = "stu.acc.creat.html";
+    } else {
+        alert("Wrong OTP ❌");
+    }
+}
+
+</script>
+
+</body>
+</html>

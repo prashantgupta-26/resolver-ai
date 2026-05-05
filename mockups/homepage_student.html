@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resolve AI - Student</title>
+
+<style>
+
+/* RESET */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+/* BODY */
+body{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+/* SCREENS */
+.screen{
+    flex:1;
+    display:none;
+    flex-direction:column;
+}
+.screen.active{
+    display:flex;
+}
+
+/* HEADER */
+header{
+    padding:15px 25px;
+    color:white;
+    font-size:20px;
+    font-weight:bold;
+}
+
+/* MAIN */
+main{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* CHAT CONTAINER */
+.chat-container{
+    width:100%;
+    max-width:600px;
+    height:80vh;
+    display:flex;
+    flex-direction:column;
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* CHAT HEADER */
+.chat-header{
+    background:#4facfe;
+    color:white;
+    padding:15px;
+    font-weight:bold;
+}
+
+/* CHAT BOX */
+.chat-box{
+    flex:1;
+    padding:15px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+}
+
+/* MESSAGE */
+.message{
+    margin:10px 0;
+    max-width:70%;
+    padding:10px 15px;
+    border-radius:12px;
+}
+
+/* BOT */
+.bot{
+    background:#eef5ff;
+    align-self:flex-start;
+}
+
+/* USER */
+.user{
+    background:#4facfe;
+    color:white;
+    align-self:flex-end;
+}
+
+/* INPUT */
+.chat-input{
+    display:flex;
+    border-top:1px solid #ddd;
+}
+
+.chat-input input{
+    flex:1;
+    padding:12px;
+    border:none;
+    outline:none;
+}
+
+.chat-input button{
+    padding:12px 20px;
+    border:none;
+    background:#4facfe;
+    color:white;
+    cursor:pointer;
+}
+
+.chat-input button:hover{
+    background:#007bff;
+}
+
+/* PROFILE */
+.profile{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    gap:10px;
+}
+
+.profile-box{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+    color:#333;
+    width:250px;
+}
+
+/* 🔥 NAVBAR */
+.navbar{
+    display:flex;
+    justify-content:space-around;
+    background:white;
+    padding:10px 0;
+    border-top:1px solid #ddd;
+}
+
+.nav-item{
+    text-align:center;
+    cursor:pointer;
+    padding:8px 12px;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.nav-item.active{
+    background:#4facfe;
+    color:white;
+}
+
+.nav-item:hover{
+    background:#4facfe;
+    color:white;
+    transform:scale(1.05);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- CHAT SCREEN -->
+<div class="screen active" id="chatScreen">
+
+<header>
+    Hi ___👋
+</header>
+
+<main>
+    <div class="chat-container">
+        
+        <div class="chat-header">
+            AI HelpDesk 🤖
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <div class="message bot">
+                Hi! Ask me about schedule, fees, or anything 😊
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+
+    </div>
+</main>
+
+</div>
+
+<!-- PROFILE SCREEN -->
+<div class="screen" id="profileScreen">
+
+<header>
+    My Profile 👤
+</header>
+
+<div class="profile">
+    <div class="profile-box">
+        <h3>Student Name</h3>
+        <p>Email: student@email.com</p>
+        <p>Course: Science</p>
+    </div>
+</div>
+
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="nav-item active" onclick="switchTab('chatScreen',this)">💬 Chat</div>
+    <div class="nav-item" onclick="switchTab('profileScreen',this)">👤 Profile</div>
+</div>
+
+<script>
+
+let input = document.getElementById("userInput");
+
+/* ENTER SUPPORT */
+input.addEventListener("keydown", function(e){
+    if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+/* SEND MESSAGE */
+function sendMessage(){
+    let chatBox = document.getElementById("chatBox");
+
+    if(input.value.trim() === "") return;
+
+    let userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.innerText = input.value;
+    chatBox.appendChild(userMsg);
+
+    let botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+
+    let text = input.value.toLowerCase();
+
+    if(text.includes("schedule")){
+        botMsg.innerText = "Your next class is Physics at 5 PM.";
+    }
+    else if(text.includes("fees")){
+        botMsg.innerText = "You have ₹2000 pending.";
+    }
+    else{
+        botMsg.innerText = "I'm here to help! Ask about schedule, fees, or support.";
+    }
+
+    setTimeout(()=>{
+        chatBox.appendChild(botMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    },500);
+
+    input.value="";
+}
+
+/* NAVIGATION */
+function switchTab(id,el){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+    el.classList.add("active");
+}
+
+</script>
+
+</body>
+</html>
